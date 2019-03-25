@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RestController;
 import cn.nju.edu.model.Test;
 
 @RestController
-public class TestController {
+public class UserController {
 
     private static final String template = "Hello, %s!";
     private final AtomicLong counter = new AtomicLong();
 
-    @RequestMapping("/test")
+    @RequestMapping("/api/signup")
     public String dealTest(@RequestParam(value="name", defaultValue="World") String name) {
         return new Test(counter.incrementAndGet(),
                             String.format(template, name)).toString();
