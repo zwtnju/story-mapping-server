@@ -1,11 +1,11 @@
-package com.example.demo.controller;
+package cn.nju.edu.controller;
 
 import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.model.Test;
+import cn.nju.edu.model.Test;
 
 @RestController
 public class TestController {
@@ -14,13 +14,13 @@ public class TestController {
     private final AtomicLong counter = new AtomicLong();
 
     @RequestMapping("/test")
-    public Test dealTest(@RequestParam(value="name", defaultValue="World") String name) {
+    public String dealTest(@RequestParam(value="name", defaultValue="World") String name) {
         return new Test(counter.incrementAndGet(),
-                            String.format(template, name));
+                            String.format(template, name)).toString();
     }@RequestMapping("/test1")
-    public Test dealTest1(@RequestParam(value="name", defaultValue="World") String name) {
+    public String dealTest1(@RequestParam(value="name", defaultValue="World") String name) {
         return new Test(counter.incrementAndGet(),
-                            String.format(template, name));
+                            String.format(template, name)).toString();
     }@RequestMapping("/")
     public String hello(){
         return "Welcome to start SpringBoot!";

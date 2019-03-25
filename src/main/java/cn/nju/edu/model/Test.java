@@ -1,4 +1,4 @@
-package com.example.demo.model;
+package cn.nju.edu.model;
 
 public class Test {
 
@@ -16,5 +16,10 @@ public class Test {
 
     public String getContent() {
         return content;
+    }
+    
+    public String toString() {
+		return id+content;
+    	
     }
 }
