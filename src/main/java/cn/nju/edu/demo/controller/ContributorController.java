@@ -1,5 +1,6 @@
 package cn.nju.edu.demo.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,6 @@ public class ContributorController {
     private JdbcTemplate jdbcTemplate;
 	
 	// 添加协作者
-    @SuppressWarnings("finally")
     @RequestMapping("/api/contributor/create")
 //    {
 //        "userToken": "ae123asqere21asdsa3",
@@ -28,22 +28,20 @@ public class ContributorController {
     public retContribute ContributorCreate(@RequestBody Map<String,Object> mapRead) {
     	int status = 0;
     	String userToken = (String)mapRead.get("userToken");
-		String projectId = (String)mapRead.get("projectId");
-		String contributorId = (String)mapRead.get("contributorId");
-		try {
-			// 已有该协作者 返回异常状态码2
-			jdbcTemplate.queryForList("select * from project_user where "
-					+ "user_token = ? and project_id = ? and contributor_id = ?", userToken, projectId, contributorId);
-			status = 2;
-		} catch (DataAccessException e) {
+		String projectId = Integer.toString((Integer)(mapRead.get("projectId")));
+		String contributorId = Integer.toString((Integer)(mapRead.get("contributorId")));
+		List<Map<String, Object>> listDb = jdbcTemplate.queryForList("select * from project_user where "
+				+ "user_token = ? and project_id = ? and contributor_id = ?", userToken, projectId, contributorId);
+		if(listDb.isEmpty()) {
 			// 数据库插入该协作者
-			e.printStackTrace();
 			jdbcTemplate.update("insert into project_user"
-					+ "(user_token,project_id,contributor_id) values (?,?,?)", 
+					+ "(user_token, project_id, contributor_id) values (?, ?, ?)", 
 					userToken, projectId, contributorId);
-		} finally {
-			return new retContribute(status);
+		} else {
+			// 已有该协作者 返回异常状态码2
+			status = 2;
 		}
+		return new retContribute(status);
     }
     
     // 删除协作者
@@ -57,8 +55,8 @@ public class ContributorController {
     public retContribute ContributorDelete(@RequestBody Map<String,Object> mapRead) {
     	int status = 0;
     	String userToken = (String)mapRead.get("userToken");
-		String projectId = (String)mapRead.get("projectId");
-		String contributorId = (String)mapRead.get("contributorId");
+		String projectId = Integer.toString((Integer)(mapRead.get("projectId")));
+		String contributorId = Integer.toString((Integer)(mapRead.get("contributorId")));
 		try {
 			// 删除协作者 返回正常
 			jdbcTemplate.queryForMap("select * from project_user where "

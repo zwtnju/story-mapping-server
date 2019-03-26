@@ -35,15 +35,16 @@ public class UserController {
 			// 已有数据 返回异常状态码2
 			jdbcTemplate.queryForMap("select * from user where user_email = ?", userEmail);
 			status = 2;
-			newUser = new retUser(status, "null", "null", "null");
+			newUser = new retUser(status, null);
 		} catch (Exception e) {
 			// 插入数据 返回正常状态码0
-			e.printStackTrace();
-			newUser = new retUser(status, (String)mapRead.get("userEmail"), 
-	    			(String)mapRead.get("userPassword"), (String)mapRead.get("userName"));
+			//e.printStackTrace();
+			newUser = new retUser(status, new User((String)mapRead.get("userEmail"), 
+					(String)mapRead.get("userPassword"), 
+					(String)mapRead.get("userName"), UUID.randomUUID().toString()));
 			User userInsert = newUser.getData();
 			jdbcTemplate.update("insert into user"
-					+ "(user_id,user_email,user_name,user_password, user_token) values (?,?,?,?,?)", 
+					+ "(user_id, user_email, user_name, user_password, user_token) values (?,?,?,?,?)", 
 					userInsert.getUserId(), userInsert.getUserEmail(), userInsert.getUserName(),
 					userInsert.getUserPassword(), userInsert.getUserToken());
 		} finally {
@@ -63,35 +64,26 @@ public class UserController {
 		try {
 			// 已有用户 返回正常状态码0
 			String userEmail = (String)mapRead.get("userEmail");
-			mapDb = jdbcTemplate.queryForMap("select * from user where userEmail = ?", userEmail);
-			return new retUser(status, mapDb.get("userEmail").toString(), 
-    				mapDb.get("userPassword").toString(), mapDb.get("userName").toString());
+			String userPassword = (String)mapRead.get("userPassword");
+			mapDb = jdbcTemplate.queryForMap("select * from user where "
+					+ "user_email = ? and user_password = ?", userEmail, userPassword);
+			return new retUser(status, new User(mapDb.get("user_email").toString(), 
+    				mapDb.get("user_password").toString(), mapDb.get("user_name").toString(),
+    				mapDb.get("user_id").toString(), mapDb.get("user_token").toString()));
 		} catch (DataAccessException e) {
-			e.printStackTrace();
 			status = 2;
-			return new retUser(status, "null", "null", "null");
+			return new retUser(status, null);
 		}
 	
     }
-    
-    @RequestMapping("/")
-    public String hello(){
-        return "Welcome to start SpringBoot!";
-    }
-    
+
     public class retUser{
     	private final int status; 
     	private final User data;
-		public retUser(int status, String userEmail, String userPassword, String userName) {
+		public retUser(int status, User data) {
 			this.status = status;
-			if(userEmail == "null") {
-				this.data = null;
-			}
-			else {
-				this.data = new User(userEmail, userPassword, userName, UUID.randomUUID().toString());
-			}
-			
-		}
+			this.data = data;
+		}			
 		public int getStatus() {
 			return status;
 		}

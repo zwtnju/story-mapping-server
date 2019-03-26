@@ -21,6 +21,15 @@ public class User {
         this.userId = userId;
     }
     
+    public User(String userEmail, String userPassword, String userName, String userId, String userToken) {
+        this.userEmail = userEmail;
+        this.userPassword = userPassword;
+        this.userName = userName;	
+        this.userId = userId;
+        this.userToken = userToken;
+    }
+    
+    
 	public String getUserEmail() {
 		return userEmail;
 	}
