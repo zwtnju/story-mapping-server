@@ -35,14 +35,14 @@ public class UserController {
 	    			(String)mapRead.get("userPassword"), (String)mapRead.get("userName"));
 			String userEmail = (String)mapRead.get("userEmail");
 			// 已有数据 返回异常状态码2
-			jdbcTemplate.queryForMap("select * from user where userEmail = ?", userEmail);
+			jdbcTemplate.queryForMap("select * from user where user_email = ?", userEmail);
 			status = 2;
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			// 插入数据 返回正常状态码0
 			e.printStackTrace();
 			User userInsert = newUser.getData();
-			jdbcTemplate.update("insert into t_user(id,useremail,username,userpassword, usertoken) values (?,?,?,?,?)", 
+			jdbcTemplate.update("insert into user"
+					+ "(id,user_email,user_name,user_password, user_token) values (?,?,?,?,?)", 
 					userInsert.getUserId(), userInsert.getUserEmail(), userInsert.getUserName(),
 					userInsert.getUserPassword(), userInsert.getUserToken());
 		} finally {
@@ -68,8 +68,7 @@ public class UserController {
 		} catch (DataAccessException e) {
 			e.printStackTrace();
 			status = 2;
-			return new retUser(status, (String)mapRead.get("userEmail"), 
-    				(String)mapRead.get("userPassword"), (String)mapRead.get("userName"));
+			return new retUser(status, "null", "null", "null");
 		}
 	
     }
@@ -84,8 +83,13 @@ public class UserController {
     	private final User data;
 		private String userId;
 		public retUser(int status, String userEmail, String userPassword, String userName) {
-			this.userId = UUID.randomUUID().toString();
 			this.status = status;
+			if(userEmail == "null") {
+				this.userId = "0";
+			}
+			else {
+				this.userId = UUID.randomUUID().toString();
+			}
 			this.data = new User(userEmail, userPassword, userName, userId);
 		}
 		public int getStatus() {

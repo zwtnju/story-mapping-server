@@ -15,7 +15,7 @@ public class DbController {
     @Autowired
     private JdbcTemplate jdbcTemplate;
     
-    @RequestMapping("/user")
+    @RequestMapping("/user1")
     public void getUser(){
     	jdbcTemplate.update("insert into appuser(id,name) values (?,?)", 3, "luck");
     }
@@ -31,6 +31,36 @@ public class DbController {
 				e.printStackTrace();
 				return "NULL";
 			}
+    }
+    
+    @SuppressWarnings("finally")
+	@RequestMapping("/user3")
+    public String getUser3(){
+    	Map<String, Object> map;
+		try {
+			int id = 1;
+			String name = "tom";
+			map = jdbcTemplate.queryForMap("select * from appuser where id = ? and name = ?", id, name);
+			return (map.get("id").toString()+"\t"+map.get("name").toString());
+		} catch (DataAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "NULL";
+		} finally {
+			return "finally";
+		}
+    }
+    
+    @RequestMapping("/user4")
+    public String getUser4(){
+		try {
+			jdbcTemplate.update("delete from appuser where id = 1");
+			return ("111");
+		} catch (DataAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "NULL";
+		}
     }
     
 }
