@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,7 @@ public class ProjectController {
     private JdbcTemplate jdbcTemplate;
     
     @SuppressWarnings({ "null", "finally" })
+    // 获取某个用户的project列表
 	@RequestMapping("/api/project/list")
 //    {
 //        "userToken": "ae123asqere21asdsa3"
@@ -52,6 +54,7 @@ public class ProjectController {
     }
 
     @SuppressWarnings("null")
+    // 某个project的具体内容
 	@RequestMapping("/api/project/get")
 //    {
 //        "userToken": "ae123asqere21asdsa3",
@@ -90,6 +93,37 @@ public class ProjectController {
 		}
     }
     
+    // 更新project card内容
+    @SuppressWarnings("finally")
+	@RequestMapping("/api/project/update")
+// 	"cards"后的内容不需要解析，就当成一个字符串 request
+//    {
+//        "userToken": "ae123asqere21asdsa3",
+//        "projectId": 3,
+//        "projectTitle": "项目题目",
+//        "projectContent": "项目说明",
+//        "cards": [ 
+//            [ { "content": "card1" }, { "content": "card2" }, { "content": "card3" }, { "content": "card4" } ], 
+//    		    [ { "content": "card1" }, { "content": "card2" }, { "content": "card3" }, { "content": "card4" } ] 
+//    	  ]
+//    }
+  public retUpdateStatus ContributorUpdate(@RequestBody Map<String,Object> mapRead) {
+  	int status = 0;
+	String projectId = (String)mapRead.get("projectId");
+	try {
+		// 修改已有project数据
+		jdbcTemplate.queryForMap("select * from project where project_id = ?", projectId);
+		jdbcTemplate.update("update project set cards = ? where project_id = ?", (String)mapRead.get("cards"), projectId);
+	
+	} catch (DataAccessException e) {
+		// 数据库插入该协作者
+		e.printStackTrace();
+		status = 2;
+	} finally {
+		return new retUpdateStatus(status);
+	}
+	
+  }
     
     
     public class retProjectList{
@@ -121,6 +155,21 @@ public class ProjectController {
 			return status;
 		}
 		public Project getData() {
+			return data;
+		}    	
+    }
+    
+    public class retUpdateStatus{
+    	private final int status; 
+    	private final String data;
+		public retUpdateStatus(int status) {
+			this.status = status;
+			this.data = null;
+		}
+		public int getStatus() {
+			return status;
+		}
+		public String getData() {
 			return data;
 		}    	
     }

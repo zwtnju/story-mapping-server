@@ -18,7 +18,7 @@ public class ContributorController {
 	
 	// 添加协作者
     @SuppressWarnings("finally")
-	@RequestMapping("/api/contributor/create")
+    @RequestMapping("/api/contributor/create")
 //    {
 //        "userToken": "ae123asqere21asdsa3",
 //        "projectId": 3,
@@ -48,7 +48,7 @@ public class ContributorController {
     
     // 删除协作者
     @SuppressWarnings("finally")
-	@RequestMapping("/api/contributor/delete")
+    @RequestMapping("/api/contributor/delete")
 //    {
 //        "userToken": "ae123asqere21asdsa3",
 //        "projectId": 3,
