@@ -42,7 +42,7 @@ public class UserController {
 			e.printStackTrace();
 			User userInsert = newUser.getData();
 			jdbcTemplate.update("insert into user"
-					+ "(id,user_email,user_name,user_password, user_token) values (?,?,?,?,?)", 
+					+ "(user_id,user_email,user_name,user_password, user_token) values (?,?,?,?,?)", 
 					userInsert.getUserId(), userInsert.getUserEmail(), userInsert.getUserName(),
 					userInsert.getUserPassword(), userInsert.getUserToken());
 		} finally {

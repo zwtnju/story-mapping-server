@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-public class ContributerController {
+public class ContributorController {
 	
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -29,15 +29,15 @@ public class ContributerController {
     	int status = 0;
     	String userToken = (String)mapRead.get("userToken");
 		String projectId = (String)mapRead.get("projectId");
+		String contributorId = (String)mapRead.get("contributorId");
 		try {
 			// 已有该协作者 返回异常状态码2
-			jdbcTemplate.queryForMap("select * from project_user where "
-					+ "user_token = ? and project_id = ?", userToken, projectId);
+			jdbcTemplate.queryForList("select * from project_user where "
+					+ "user_token = ? and project_id = ? and contributor_id = ?", userToken, projectId, contributorId);
 			status = 2;
 		} catch (DataAccessException e) {
 			// 数据库插入该协作者
 			e.printStackTrace();
-			String contributorId = (String)mapRead.get("contributorId");
 			jdbcTemplate.update("insert into project_user"
 					+ "(user_token,project_id,contributor_id) values (?,?,?)", 
 					userToken, projectId, contributorId);
@@ -58,11 +58,11 @@ public class ContributerController {
     	int status = 0;
     	String userToken = (String)mapRead.get("userToken");
 		String projectId = (String)mapRead.get("projectId");
+		String contributorId = (String)mapRead.get("contributorId");
 		try {
 			// 删除协作者 返回正常
 			jdbcTemplate.queryForMap("select * from project_user where "
-					+ "user_token = ? and project_id = ?", userToken, projectId);
-			String contributorId = (String)mapRead.get("contributorId");
+					+ "user_token = ? and project_id = ? and contributor_id = ?", userToken, projectId, contributorId);			
 			jdbcTemplate.update("delete from project_user where "
 					+ "user_token = ? and project_id = ? and contributor_id = ?", userToken, projectId, contributorId);
 		} catch (DataAccessException e) {

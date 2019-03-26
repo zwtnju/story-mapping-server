@@ -6,7 +6,7 @@ public class ProjectDetail extends Project {
 	private List<Contributor> contributors;
 	private String projectCards;
 
-	public ProjectDetail(int projectId, String projectTitle, String projectContent, int ownerId, String ownerEmail,
+	public ProjectDetail(String projectId, String projectTitle, String projectContent, String ownerId, String ownerEmail,
 			String ownerName, List<Contributor> contributors, String projectCards) {
 		super(projectId, projectTitle, projectContent, ownerId, ownerEmail, ownerName);
 		this.projectCards = projectCards;

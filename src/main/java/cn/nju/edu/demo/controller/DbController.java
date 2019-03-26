@@ -1,6 +1,7 @@
 package cn.nju.edu.demo.controller;
 
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +23,15 @@ public class DbController {
     
     @RequestMapping("/user2")
     public String getUser2(){
-    		Map<String, Object> map;
+    		List<Map<String, Object>> map;
 			try {
-				map = jdbcTemplate.queryForMap("select * from appuser where id = 1");
-				return (map.get("id").toString()+"\t"+map.get("name").toString());
+				map = jdbcTemplate.queryForList("select * from appuser where id = 3");
+				String ret = "n";
+				
+				for(Map<String, Object> pairs : map) {
+					ret += pairs.get("name").toString();
+				}
+				return (ret);
 			} catch (DataAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

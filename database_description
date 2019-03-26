@@ -1,11 +1,13 @@
 db: story_mapping
 table:
 1. user
-id, user_email, user_name, user_password, user_token
-string, string, string, string, string
+user_id,  user_email,  user_name,  user_password,  user_token
 
 2.project_user
-user_token, project_id, contributor_id
-string, string, string
+user_token,  project_id,  contributor_id
 
 3.project
+project_id,  project_title,  project_content,  owner_id,  owner_email,  owner_name, cards
+
+4.contributor
+contributor_id,  contributor_email, contributor_name
