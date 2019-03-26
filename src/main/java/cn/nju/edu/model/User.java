@@ -13,7 +13,11 @@ public class User {
         this.userEmail = userEmail;
         this.userPassword = userPassword;
         this.userName = userName;
-        this.userToken = UUID.randomUUID().toString();
+        if(userId == "null") {
+        	this.userToken = "null";
+        } else {
+        	this.userToken = UUID.randomUUID().toString();
+        }
         this.userId = userId;
     }
     

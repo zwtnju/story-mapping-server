@@ -31,15 +31,16 @@ public class UserController {
     	//注册，比对数据库是否有信息，没有就添加
 		retUser newUser = null;
 		try {
-			newUser = new retUser(status, (String)mapRead.get("userEmail"), 
-	    			(String)mapRead.get("userPassword"), (String)mapRead.get("userName"));
 			String userEmail = (String)mapRead.get("userEmail");
 			// 已有数据 返回异常状态码2
 			jdbcTemplate.queryForMap("select * from user where user_email = ?", userEmail);
 			status = 2;
+			newUser = new retUser(status, "null", "null", "null");
 		} catch (Exception e) {
 			// 插入数据 返回正常状态码0
 			e.printStackTrace();
+			newUser = new retUser(status, (String)mapRead.get("userEmail"), 
+	    			(String)mapRead.get("userPassword"), (String)mapRead.get("userName"));
 			User userInsert = newUser.getData();
 			jdbcTemplate.update("insert into user"
 					+ "(user_id,user_email,user_name,user_password, user_token) values (?,?,?,?,?)", 
@@ -81,16 +82,15 @@ public class UserController {
     public class retUser{
     	private final int status; 
     	private final User data;
-		private String userId;
 		public retUser(int status, String userEmail, String userPassword, String userName) {
 			this.status = status;
 			if(userEmail == "null") {
-				this.userId = "0";
+				this.data = null;
 			}
 			else {
-				this.userId = UUID.randomUUID().toString();
+				this.data = new User(userEmail, userPassword, userName, UUID.randomUUID().toString());
 			}
-			this.data = new User(userEmail, userPassword, userName, userId);
+			
 		}
 		public int getStatus() {
 			return status;
