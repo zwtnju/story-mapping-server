@@ -8,6 +8,3 @@ user_token,  project_id,  contributor_id
 
 3.project
 project_id,  project_title,  project_content,  owner_id,  owner_email,  owner_name, cards
-
-4.contributor
-contributor_id,  contributor_email, contributor_name
