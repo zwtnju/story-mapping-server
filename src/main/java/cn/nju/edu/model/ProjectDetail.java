@@ -9,7 +9,11 @@ public class ProjectDetail extends Project {
 	public ProjectDetail(String projectId, String projectTitle, String projectContent, String ownerId, String ownerEmail,
 			String ownerName, List<Contributor> contributors, String projectCards) {
 		super(projectId, projectTitle, projectContent, ownerId, ownerEmail, ownerName);
-		this.projectCards = projectCards;
+		if(projectCards.equals("null")) {
+			this.projectCards = null;
+		} else {
+			this.projectCards = projectCards;
+		}
 		this.contributors = contributors;
 	}
 

@@ -19,17 +19,20 @@ public class ContributorController {
 	
 	// 添加协作者
     @RequestMapping("/api/contributor/create")
-//    {
-//        "userToken": "ae123asqere21asdsa3",
-//        "projectId": 3,
-//        "contributorId": 6
-//    }
     // 多建一个表 关系表
     public retContribute ContributorCreate(@RequestBody Map<String,Object> mapRead) {
     	int status = 0;
+    	if(mapRead.size() != 3 || !mapRead.containsKey("userToken")
+    			 || !mapRead.containsKey("projectId")  || !mapRead.containsKey("contributorId") ) {
+    		// 输入格式错误
+    		status = 2;
+    		return new retContribute(status);
+    	}
+    	
     	String userToken = (String)mapRead.get("userToken");
 		String projectId = Integer.toString((Integer)(mapRead.get("projectId")));
 		String contributorId = Integer.toString((Integer)(mapRead.get("contributorId")));
+
 		List<Map<String, Object>> listDb = jdbcTemplate.queryForList("select * from project_user where "
 				+ "user_token = ? and project_id = ? and contributor_id = ?", userToken, projectId, contributorId);
 		if(listDb.isEmpty()) {
@@ -38,35 +41,36 @@ public class ContributorController {
 					+ "(user_token, project_id, contributor_id) values (?, ?, ?)", 
 					userToken, projectId, contributorId);
 		} else {
-			// 已有该协作者 返回异常状态码2
-			status = 2;
+			// 数据库已有该协作者 返回异常状态码1
+			status = 1;
 		}
 		return new retContribute(status);
     }
     
     // 删除协作者
-    @SuppressWarnings("finally")
     @RequestMapping("/api/contributor/delete")
-//    {
-//        "userToken": "ae123asqere21asdsa3",
-//        "projectId": 3,
-//        "contributorId": 6
-//    }
     public retContribute ContributorDelete(@RequestBody Map<String,Object> mapRead) {
     	int status = 0;
+    	if(mapRead.size() != 3 || !mapRead.containsKey("userToken")
+    			|| !mapRead.containsKey("projectId")  || !mapRead.containsKey("contributorId") ) {
+    		// 输入格式错误
+    		status = 2;
+    		return new retContribute(status);
+    	}
     	String userToken = (String)mapRead.get("userToken");
 		String projectId = Integer.toString((Integer)(mapRead.get("projectId")));
 		String contributorId = Integer.toString((Integer)(mapRead.get("contributorId")));
+			
 		try {
 			// 删除协作者 返回正常
 			jdbcTemplate.queryForMap("select * from project_user where "
 					+ "user_token = ? and project_id = ? and contributor_id = ?", userToken, projectId, contributorId);			
 			jdbcTemplate.update("delete from project_user where "
 					+ "user_token = ? and project_id = ? and contributor_id = ?", userToken, projectId, contributorId);
+			return new retContribute(status);
 		} catch (DataAccessException e) {
 			// 没有该协作者
-			status = 2;
-		} finally {
+			status = 1;
 			return new retContribute(status);
 		}
     }
