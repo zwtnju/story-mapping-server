@@ -17,15 +17,21 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-		<mysql-connector>5.1.39</mysql-connector>
+		<mysql-connector>5.7.25</mysql-connector>
 	</properties>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<optional>true</optional><!--当其他项目继承该项目时，该坐标不会被继承 -->
+		</dependency>
+		
 		<!-- MySQL 连接驱动依赖 -->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -35,6 +41,8 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
+
+
 
 	</dependencies>
 

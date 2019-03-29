@@ -1,6 +1,5 @@
 package cn.nju.edu.demo.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ public class ContributorController {
     public retContribute ContributorCreate(@RequestBody Map<String,Object> mapRead) {
     	int status = 0;
     	if(mapRead.size() != 3 || !mapRead.containsKey("userToken")
-    			 || !mapRead.containsKey("projectId")  || !mapRead.containsKey("contributorId") ) {
+    			 || !mapRead.containsKey("projectId")  || !mapRead.containsKey("contributorEmail") ) {
     		// 输入格式错误
     		status = 2;
     		return new retContribute(status);
@@ -31,20 +30,26 @@ public class ContributorController {
     	
     	String userToken = (String)mapRead.get("userToken");
 		String projectId = Integer.toString((Integer)(mapRead.get("projectId")));
-		String contributorId = Integer.toString((Integer)(mapRead.get("contributorId")));
+		String contributorEmail = Integer.toString((Integer)(mapRead.get("contributorEmail")));
 
-		List<Map<String, Object>> listDb = jdbcTemplate.queryForList("select * from project_user where "
-				+ "user_token = ? and project_id = ? and contributor_id = ?", userToken, projectId, contributorId);
-		if(listDb.isEmpty()) {
-			// 数据库插入该协作者
-			jdbcTemplate.update("insert into project_user"
-					+ "(user_token, project_id, contributor_id) values (?, ?, ?)", 
-					userToken, projectId, contributorId);
-		} else {
-			// 数据库已有该协作者 返回异常状态码1
+		jdbcTemplate.queryForList("select * from project_user where "
+				+ "user_token = ? and project_id = ?", userToken, projectId);
+		try {
+			Map<String, Object> mapDb = jdbcTemplate.queryForMap
+					("select * from user where user_email = ?", contributorEmail);
+			
+			String contributorId = (String)mapDb.get("user_id");
+			
+				// 数据库插入该协作者
+				jdbcTemplate.update("insert into project_user"
+						+ "(user_token, project_id, contributor_id) values (?, ?, ?)", 
+						userToken, projectId, contributorId);
+			return new retContribute(status);
+		} catch (DataAccessException e) {
 			status = 1;
+			return new retContribute(status);
 		}
-		return new retContribute(status);
+		
     }
     
     // 删除协作者

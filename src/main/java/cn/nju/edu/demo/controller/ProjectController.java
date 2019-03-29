@@ -111,6 +111,7 @@ public class ProjectController {
 			}
 	    	for(Map<String, Object> mapDb : listDb) {
 				String projectId = mapDb.get("project_id").toString();
+				System.out.println(projectId);
 				Map<String, Object> mapProject = 
 						jdbcTemplate.queryForMap("select * from project where project_id = ?", projectId);
 				Project newProject = new Project(mapProject.get("project_id").toString(), 
@@ -121,6 +122,7 @@ public class ProjectController {
 			}
 			return new retProjectList(status, projectList);
 		} catch (Exception e) {
+			e.printStackTrace();
 			status = 1;
 			return new retProjectList(status, projectList);
 		}	
