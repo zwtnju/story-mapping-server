@@ -1,5 +1,6 @@
 package cn.nju.edu.demo.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,21 +30,26 @@ public class ContributorController {
     	}
     	
     	String userToken = (String)mapRead.get("userToken");
-		String projectId = Integer.toString((Integer)(mapRead.get("projectId")));
-		String contributorEmail = Integer.toString((Integer)(mapRead.get("contributorEmail")));
+		String projectId = (String)mapRead.get("projectId");
+		String contributorEmail = (String)mapRead.get("contributorEmail");
 
-		jdbcTemplate.queryForList("select * from project_user where "
-				+ "user_token = ? and project_id = ?", userToken, projectId);
 		try {
 			Map<String, Object> mapDb = jdbcTemplate.queryForMap
 					("select * from user where user_email = ?", contributorEmail);
 			
 			String contributorId = (String)mapDb.get("user_id");
 			
+			List<Map<String, Object>> dbList = 
+					jdbcTemplate.queryForList("select * from project_user where "
+					+ "user_token = ? and project_id = ? and contributor_id = ?", userToken, projectId, contributorId);
+			if(dbList.isEmpty()) {
 				// 数据库插入该协作者
 				jdbcTemplate.update("insert into project_user"
 						+ "(user_token, project_id, contributor_id) values (?, ?, ?)", 
 						userToken, projectId, contributorId);
+			} else {
+				return new retContribute(1);
+			}
 			return new retContribute(status);
 		} catch (DataAccessException e) {
 			status = 1;
@@ -63,8 +69,8 @@ public class ContributorController {
     		return new retContribute(status);
     	}
     	String userToken = (String)mapRead.get("userToken");
-		String projectId = Integer.toString((Integer)(mapRead.get("projectId")));
-		String contributorId = Integer.toString((Integer)(mapRead.get("contributorId")));
+		String projectId = (String)mapRead.get("projectId");
+		String contributorId = (String)mapRead.get("contributorId");
 			
 		try {
 			// 删除协作者 返回正常

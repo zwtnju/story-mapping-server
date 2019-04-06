@@ -104,8 +104,9 @@ public class ProjectController {
     	String userToken = (String)mapRead.get("userToken");
     	List<Project> projectList = new ArrayList<Project>();
 		try {
+			// 去除重复的project_id
 	    	List<Map<String, Object>> listDb = 
-	    			jdbcTemplate.queryForList("select project_id from project_user where user_token = ?", userToken);    			
+	    			jdbcTemplate.queryForList("select distinct project_id from project_user where user_token = ?", userToken);    			
 			if(listDb.isEmpty()) {
 				return new retProjectList(status, null);
 			}
