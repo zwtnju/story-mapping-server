@@ -194,13 +194,18 @@ public class ProjectController {
     		return new retStatus(status);
     	}
 	  	
-	  	String userToken = (String)(mapRead.get("userToken"));;
+	  	String userToken = (String)(mapRead.get("userToken"));
 		String projectId = (String)mapRead.get("projectId");
 		String cards = (String)(mapRead.get("cards"));
 		try {
+			
+			Map<String, Object> mapUser =
+					jdbcTemplate.queryForMap("select * from user where user_token = ?", userToken);
+			String contributorId= mapUser.get("user_id").toString();
+			
 			// 修改已有project数据
 			jdbcTemplate.queryForMap("select * from project_user where "
-					+ "project_id = ? and user_token = ?", projectId, userToken);
+					+ "project_id = ? and contributor_id = ?", projectId, contributorId);
 			jdbcTemplate.queryForMap("select * from project where project_id = ?", projectId);
 			jdbcTemplate.update("update project set cards = ? where project_id = ?", cards, projectId);
 			return new retStatus(status);
