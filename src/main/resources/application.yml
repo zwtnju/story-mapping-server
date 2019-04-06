@@ -12,3 +12,5 @@ spring:
   jpa:
     database: MYSQL
     show-sql: true
+  mvc:
+    static-path-pattern: /**

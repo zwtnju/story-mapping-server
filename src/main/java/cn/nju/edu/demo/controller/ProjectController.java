@@ -104,9 +104,12 @@ public class ProjectController {
     	String userToken = (String)mapRead.get("userToken");
     	List<Project> projectList = new ArrayList<Project>();
 		try {
+			Map<String, Object> mapUser =
+					jdbcTemplate.queryForMap("select * from user where user_token = ?", userToken);
+			String contributorId= mapUser.get("user_id").toString();
 			// 去除重复的project_id
 	    	List<Map<String, Object>> listDb = 
-	    			jdbcTemplate.queryForList("select distinct project_id from project_user where user_token = ?", userToken);    			
+	    			jdbcTemplate.queryForList("select distinct project_id from project_user where contributor_id = ?", contributorId);    			
 			if(listDb.isEmpty()) {
 				return new retProjectList(status, null);
 			}
@@ -143,13 +146,18 @@ public class ProjectController {
     	String userToken = (String)mapRead.get("userToken");
 		String projectId = (String)mapRead.get("projectId");
 		try {
+			jdbcTemplate.queryForMap("select * from project_user "
+    				+ "where contributor_id = ? and project_id = ?",
+    				jdbcTemplate.queryForMap("select * from user "
+    						+ "where user_token = ?", userToken).get("user_id").toString(), projectId);	
+			
     		List<Map<String, Object>> contributorDb = 
-    				jdbcTemplate.queryForList("select contributor_id from project_user "
-    				+ "where user_token = ? and project_id = ?", userToken, projectId);
+    				jdbcTemplate.queryForList("select distinct contributor_id from project_user "
+    				+ "where project_id = ?", projectId);
     		List<Contributor> contributors = new ArrayList<Contributor>();
+    		
     		for(Map<String, Object> mapDb : contributorDb) {
     			String contributorId = mapDb.get("contributor_id").toString();
-
     			Map<String, Object> mapContributor = 
     					jdbcTemplate.queryForMap("select * from user "
     							+ "where user_id = ?", contributorId);
@@ -157,6 +165,7 @@ public class ProjectController {
     					mapContributor.get("user_email").toString(), 
     					mapContributor.get("user_name").toString()));
     		}
+    		//  查找
 			Map<String, Object> mapProject = 
 				jdbcTemplate.queryForMap("select * from project where project_id = ?", projectId);
 			
